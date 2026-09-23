@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Events Widget</title>
+</head>
+<body>
+
+<h1>Nexxchange Events Widget</h1>
+
+<!-- 1. the element the widget renders into -->
+<div id="events-widget"></div>
+
+<!-- 2. the widget script, served by Nexxchange -->
+<script src="https://www.nexxchange.com/assets/widgets/js/events-widget.js"></script>
+
+<!-- 3. render the events of your golf club (see the README on how to find the issuer ID) -->
+<script>
+  renderEventsWidget("events-widget", {
+    issuerId: "<issuerId>",  // issuer ID of your golf club, see "How to find the correct issuer ID?" in the README
+    lang: "en"
+  });
+</script>
+
+</body>
+</html>

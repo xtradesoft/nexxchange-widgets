@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nexxchange Events Widget (customized)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #172b4d; margin: 30px;}
+    h1 { margin: 0 0 24px; padding-bottom: 16px; font-size: 22px; text-align: center; }
+
+    .events-container {
+      max-width: 800px;
+      margin: 0 auto;
+      border: 1px solid #e8e9ec;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .events-container h2 {
+      margin: 0;
+      padding: 12px 16px;
+      font-size: 15px;
+      color: #fff;
+      background: #706e6e;
+    }
+    .events-container .body {
+      max-height: 600px;
+      overflow: auto;
+    }
+
+    /* ===== Widget styles (optional) ===== */
+    /* The widget inherits the font of your page and can be restyled with plain CSS, see the "Styling" section of the README. */
+
+    #events-widget {
+      --nx-book-color: #2c7a54;
+      --nx-row-odd-bg: #e0eceb;
+      --nx-row-even-bg: rgba(216, 209, 209, 0);
+    }
+
+    #events-widget .nx-event-title {
+      color: #333;
+    }
+
+    /* ====================================== */
+
+  </style>
+</head>
+<body>
+
+<h1>Nexxchange Events Widget</h1>
+
+<!-- 1. the element the widget renders into, inside a container of your page -->
+<div class="events-container">
+  <h2>Upcoming Events</h2>
+  <div class="body" id="events-widget"></div>
+</div>
+
+<!-- 2. the widget script, served by Nexxchange -->
+<script src="https://www.nexxchange.com/assets/widgets/js/events-widget.js"></script>
+
+<!-- 3. render the events of your golf club (see the README on how to find the issuer ID) -->
+<script>
+  renderEventsWidget("events-widget", {
+    issuerId: "<issuerId>",  // issuer ID of your golf club, see "How to find the correct issuer ID?" in the README
+    lang: "de",
+    showDatePicker: true
+    // fromDate: new Date(),           // optional, the day whose events are shown, default today
+    // eventType: 1,                   // optional, event type id (see README)
+    // availableOnly: true             // optional, only events with free spots
+  });
+</script>
+
+</body>
+</html>

@@ -1,8 +1,14 @@
+# Nexxchange Widgets
+
+* [TeeTime Widget](#nexxchange-teetime-widget) 
+* [Tournament Widget](#tournament-widget) 
+* [Events Widget](#events-widget) 
+
 # Nexxchange TeeTime Widget
 TeeTime widget to book within the Nexxchange Marketplace <https://www.nexxchange.com>
 
 ## Overview
-The example HTML code <https://github.com/xtradesoft/nexxchange-teetime-widget/blob/master/example/index.html> shows exactly how to implement the **Nexxchange** tee time widget. 
+The example HTML code <https://github.com/xtradesoft/nexxchange-widgets/blob/master/example/index.html> shows exactly how to implement the **Nexxchange** tee time widget. 
 
 It is only a simple copy and paste.
 
@@ -97,11 +103,11 @@ Size, color, etc. can be adjusted individually using standard CSS
 
 ### Examples
 
-<img src="https://github.com/xtradesoft/nexxchange-teetime-widget/blob/master/example/img/Example-Image-using-widget.png?raw=true" alt="Website Screenshot" width="800">
+<img src="https://github.com/xtradesoft/nexxchange-widgets/blob/master/example/img/Example-Image-using-widget.png?raw=true" alt="Website Screenshot" width="800">
 
-<img src="https://github.com/xtradesoft/nexxchange-teetime-widget/blob/master/example/img/Example-Image-using-widget-2.png?raw=true" alt="Website Screenshot" width="800">
+<img src="https://github.com/xtradesoft/nexxchange-widgets/blob/master/example/img/Example-Image-using-widget-2.png?raw=true" alt="Website Screenshot" width="800">
 
-<img src="https://github.com/xtradesoft/nexxchange-teetime-widget/blob/master/example/img/Example-Image-using-widget-3.png?raw=true" alt="Website Screenshot" width="800">
+<img src="https://github.com/xtradesoft/nexxchange-widgets/blob/master/example/img/Example-Image-using-widget-3.png?raw=true" alt="Website Screenshot" width="800">
 
 ### Selection of Live Implementations
 
@@ -140,7 +146,7 @@ Invoke `renderTournamentWidget` for a given DOM element ID and pass the desired 
 
 A full example page can be found here: https://b2b.nexxchange.com/playground/tournament-widget.html
 
-<img src="https://github.com/xtradesoft/nexxchange-teetime-widget/blob/master/example/img/tournament-widget.png?raw=true" alt="Tournament Widget in Action" width="800">
+<img src="https://github.com/xtradesoft/nexxchange-widgets/blob/master/example/img/tournament-widget.png?raw=true" alt="Tournament Widget in Action" width="800">
 
 ## Widget Parameter Section
 
@@ -228,6 +234,116 @@ Also use the `hideFromDatePicker` property to hide the built-in date picker.
 ### What happens in case the widget cannot load the tournament data for some reason?
 
 The spinner will be replaced by a reload icon. Clicking on the icon will trigger a reload request.
+
+# Events Widget
+
+The events widget shows the upcoming events of a golf club on an external website.
+
+* Minimal configuration: include one script and call `renderEventsWidget` for a DOM element.
+* Self contained: plain JavaScript. Its stylesheet is injected by the widget and can be overridden with plain CSS.
+* No iframes required.
+* Data only: the widget can hand you the raw JSON instead of rendering it, see [Data only](#data-only).
+
+## Integration
+
+```
+<div id="events-widget"></div>
+...
+<script src="https://www.nexxchange.com/assets/widgets/js/events-widget.js"></script>
+<script>
+  renderEventsWidget(
+    "events-widget",            // ID of the target DOM element
+    { issuerId: "<issuerId>" }  // issuer ID of your golf club, see "How to find the correct issuer ID?"
+  );
+</script>
+```
+
+Example pages: [example/events.html](example/events.html) shows the widget's default look,
+[example/events-customized.html](example/events-customized.html) shows it with some customization.
+
+Each event is rendered as one row: title (linking to the event page on the marketplace) followed by the event type
+(a small divider in the type's colour and the type name), start and end date and time, the availability ("x spots left",
+"almost fully booked", waiting list or fully booked) and a "Book Now" button leading to the booking on the marketplace. 
+
+The widget shows the events of one day (today by default, or the chosen `fromDate`), at most 10 events.
+
+## Widget Parameter Section
+
+| Name              | Type     | Description                                                                                                                                                                          |
+| ----------------- | -------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| issuerId          | string   | Issuer ID of the golf club (required)                                                                                                                                                |
+| lang              | string   | Language of the labels and of the weekday and month names, default `en`                                                                                                              |
+| fromDate          | Date     | The day whose events are shown, default today                                                                                                                                        |
+| eventType         | integer  | Show only events of this type. To find the id: open the events page of your club on the marketplace, choose the type in the filter, and read the `eventType` value from the page URL |
+| availableOnly     | boolean  | Show only events with free spots                                                                                                                                                     |
+| showBookingButton | boolean  | Hide the "Book Now" button when `false`                                                                                                                                              |
+| showDatePicker    | boolean  | Show a date picker above the events to choose the day. Default `false`                                                                                                               |
+| i18n              | Map<string,string> | Overrides single labels: `bookNow`, `noResults`, `date`, `spotsLeft`, `almostFullyBooked`, `fullyBooked`, `waitingList` (`{0}` is replaced by the number of spots)                   |
+| render            | function | Data only: your own rendering, see below                                                                                                                                             |
+
+`renderEventsWidget` returns a widget object with one method, `reload(options)`, which re-fetches events with the changed
+options, e.g. `widget.reload({ availableOnly: true })`.
+
+## Data only
+
+Pass a `render` function to receive the JSON instead of the built-in view. The function gets the data and the container element:
+
+```
+renderEventsWidget("events-widget", {
+  issuerId: "<issuerId>",
+  render: function (data, container) {
+    // see the schema below
+  }
+});
+```
+
+The response:
+
+```
+{
+  config: {
+    i18nDictionary: { bookNow, noResults, date, spotsLeft, almostFullyBooked, fullyBooked, waitingList }  // labels in the requested language
+  },
+  events: [
+    {
+      title: string,
+      startDateTime: string,          // ISO-8601 in the club's local time, e.g. "2026-09-21T06:00:00+02:00"
+      endDateTime?: string,
+      eventType?: { name: string, color?: string },
+      remainingRegistrations?: number, // absent when the event has no maximum
+      almostFull: boolean,
+      canBeRegistered: boolean,
+      canJoinWaitingList: boolean,
+      eventDetailsLink: string,        // event detail page on the marketplace
+      bookingLink: string              // booking on the marketplace;
+    }
+  ]
+}
+```
+
+## Styling
+
+The widget injects its stylesheet at the top of `<head>`, so the stylesheet of your page overrides it with plain
+selectors, no `!important` needed. All elements carry a class inside `.nx-events-widget`: `nx-event-row`, `nx-event-title-row`
+with `nx-event-title`, `nx-event-type-divider` and `nx-event-type`, `nx-event-meta`, `nx-event-date`, `nx-event-availability`
+(with `nx-state-warning` or `nx-state-danger`), `nx-event-book` and, with the date picker, `nx-event-datepicker` with
+`nx-event-datepicker-label` and `nx-event-datepicker-input`.
+Colours have custom properties on the widget root:
+
+```
+.nx-events-widget {
+  --nx-book-color: #1e4234;   /* "Book Now" button */
+  --nx-row-odd-bg: #eef3f8;   /* background of odd rows */
+  --nx-row-even-bg: #fff;     /* background of even rows */
+}
+.nx-events-widget .nx-event-title { color: #333; }
+```
+
+The font is inherited from your page. 
+
+### Debugging
+
+In case of load errors (reload icon is shown), please check the browser console for more details.
 
 ### License
 
