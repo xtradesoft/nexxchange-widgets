@@ -265,7 +265,7 @@ Each event is rendered as one row: title (linking to the event page on the marke
 (a small divider in the type's colour and the type name), start and end date and time, the availability ("x spots left",
 "almost fully booked", waiting list or fully booked) and a "Book Now" button leading to the booking on the marketplace. 
 
-The widget shows the events of one day (today by default, or the chosen `fromDate`), at most 10 events.
+The widget shows the upcoming events from `fromDate` (today by default) over the next 6 months, at most 10 events.
 
 ## Widget Parameter Section
 
@@ -273,12 +273,12 @@ The widget shows the events of one day (today by default, or the chosen `fromDat
 | ----------------- | -------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | issuerId          | string   | Issuer ID of the golf club (required)                                                                                                                                                |
 | lang              | string   | Language of the labels and of the weekday and month names, default `en`                                                                                                              |
-| fromDate          | Date     | The day whose events are shown, default today                                                                                                                                        |
+| fromDate          | Date     | Start of the shown period, default today                                                                                                                                             |
 | eventType         | integer  | Show only events of this type. To find the id: open the events page of your club on the marketplace, choose the type in the filter, and read the `eventType` value from the page URL |
 | availableOnly     | boolean  | Show only events with free spots                                                                                                                                                     |
 | showBookingButton | boolean  | Hide the "Book Now" button when `false`                                                                                                                                              |
-| showDatePicker    | boolean  | Show a date picker above the events to choose the day. Default `false`                                                                                                               |
-| i18n              | Map<string,string> | Overrides single labels: `bookNow`, `noResults`, `date`, `spotsLeft`, `almostFullyBooked`, `fullyBooked`, `waitingList` (`{0}` is replaced by the number of spots)                   |
+| showDatePicker    | boolean  | Show a date picker above the events to choose the start date. Default `false`                                                                                                        |
+| i18n              | Map<string,string> | Overrides single labels: `bookNow`, `noResults`, `date`, `spotsLeft`, `almostFullyBooked`, `fullyBooked`, `waitingList` (`{0}` is replaced by the number of spots) and `loadError` (shown when the events cannot be fetched) |
 | render            | function | Data only: your own rendering, see below                                                                                                                                             |
 
 `renderEventsWidget` returns a widget object with one method, `reload(options)`, which re-fetches events with the changed
